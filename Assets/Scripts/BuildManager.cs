@@ -2,14 +2,11 @@
 using UnityEngine;
 
 public class BuildManager : MonoBehaviour {
-
     // To be sure there is only one instance
     public static BuildManager instance;
 
-    private void Awake()
-    {
-        if(instance != null)
-        {
+    private void Awake() {
+        if (instance != null) {
             Debug.LogError("More than one BuildManager");
             return;
         }
@@ -24,13 +21,16 @@ public class BuildManager : MonoBehaviour {
 
     public NodeUI nodeUI;
 
-    public bool CanBuild { get { return turretToBuild != null; } }
-    public bool HasMoney { get { return PlayerStats.Money >= turretToBuild.cost ; } }
+    public bool CanBuild {
+        get { return turretToBuild != null; }
+    }
 
-    public void SelectNode(Node node)
-    {
-        if(selectedNode == node)
-        {
+    public bool HasMoney {
+        get { return PlayerStats.Money >= turretToBuild.cost; }
+    }
+
+    public void SelectNode(Node node) {
+        if (selectedNode == node) {
             DeselectNode();
             return;
         }
@@ -41,20 +41,17 @@ public class BuildManager : MonoBehaviour {
         nodeUI.SetTarget(node);
     }
 
-    public void DeselectNode()
-    {
+    public void DeselectNode() {
         selectedNode = null;
         nodeUI.Hide();
     }
 
-    public void SelectTurretToBuild(TurretBlueprint turretBlueprint)
-    {
+    public void SelectTurretToBuild(TurretBlueprint turretBlueprint) {
         turretToBuild = turretBlueprint;
         DeselectNode();
     }
 
-    public TurretBlueprint GetTurretToBuild()
-    {
+    public TurretBlueprint GetTurretToBuild() {
         return turretToBuild;
     }
 }

@@ -2,54 +2,44 @@
 using UnityEngine.EventSystems;
 
 public class Node : MonoBehaviour {
-
     public Color hoverColor;
     public Color hoverAlarmColor;
     public Vector3 positionOffset;
 
-    [HideInInspector]
-    public GameObject turret;
+    [HideInInspector] public GameObject turret;
 
-    [HideInInspector]
-    public TurretBlueprint turretBlueprint;
+    [HideInInspector] public TurretBlueprint turretBlueprint;
 
-    [HideInInspector]
-    public bool isUpgraded = false;
+    [HideInInspector] public bool isUpgraded = false;
 
     private Renderer rend;
     private Color starColor;
 
     BuildManager buildManager;
 
-    private void Start()
-    {
+    private void Start() {
         rend = GetComponent<Renderer>();
         starColor = rend.material.color;
 
         buildManager = BuildManager.instance;
     }
 
-    public Vector3 GetBuildPosition()
-    {
+    public Vector3 GetBuildPosition() {
         return transform.position + positionOffset;
     }
 
-    private void OnMouseDown()
-    {
+    private void OnMouseDown() {
         // if the mouse is on top of a gui element or so, exit
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
+        if (EventSystem.current.IsPointerOverGameObject()) {
             return;
         }
 
-        if(turret != null)
-        {
+        if (turret != null) {
             buildManager.SelectNode(this);
             return;
         }
 
-        if (!buildManager.CanBuild)
-        {
+        if (!buildManager.CanBuild) {
             return;
         }
 
@@ -57,41 +47,40 @@ public class Node : MonoBehaviour {
         BuildTurret(buildManager.GetTurretToBuild());
     }
 
-    void BuildTurret(TurretBlueprint blueprint)
-    {
-        if (PlayerStats.Money < blueprint.cost)
-        {
+    void BuildTurret(TurretBlueprint blueprint) {
+        if (PlayerStats.Money < blueprint.cost) {
             Debug.Log("Not enough money to build!");
             return;
         }
+
         PlayerStats.Money -= blueprint.cost;
 
-        GameObject _turret = (GameObject)Instantiate(blueprint.prefab, GetBuildPosition(), Quaternion.identity);
+        GameObject _turret = (GameObject) Instantiate(blueprint.prefab, GetBuildPosition(), Quaternion.identity);
         turret = _turret;
 
         turretBlueprint = blueprint;
 
-        GameObject effect = (GameObject)Instantiate(buildManager.buildEffect, GetBuildPosition(), Quaternion.identity);
+        GameObject effect = (GameObject) Instantiate(buildManager.buildEffect, GetBuildPosition(), Quaternion.identity);
         Destroy(effect, 5f);
 
         Debug.Log("Turret built!");
     }
 
-    public void UpgradeTurret()
-    {
-        if (PlayerStats.Money < turretBlueprint.upgradeCost)
-        {
+    public void UpgradeTurret() {
+        if (PlayerStats.Money < turretBlueprint.upgradeCost) {
             Debug.Log("Not enough money to update!");
             return;
         }
+
         PlayerStats.Money -= turretBlueprint.upgradeCost;
 
         Destroy(turret);
 
-        GameObject _turret = (GameObject)Instantiate(turretBlueprint.upgradePrefab, GetBuildPosition(), Quaternion.identity);
+        GameObject _turret =
+            (GameObject) Instantiate(turretBlueprint.upgradePrefab, GetBuildPosition(), Quaternion.identity);
         turret = _turret;
 
-        GameObject effect = (GameObject)Instantiate(buildManager.buildEffect, GetBuildPosition(), Quaternion.identity);
+        GameObject effect = (GameObject) Instantiate(buildManager.buildEffect, GetBuildPosition(), Quaternion.identity);
         Destroy(effect, 5f);
 
         isUpgraded = true;
@@ -99,39 +88,32 @@ public class Node : MonoBehaviour {
         Debug.Log("Turret upgraded!");
     }
 
-    public void SellTurret()
-    {
+    public void SellTurret() {
         PlayerStats.Money += turretBlueprint.GetSellAmount();
 
         Destroy(turret);
         turretBlueprint = null;
     }
 
-    void OnMouseEnter()
-    {
+    void OnMouseEnter() {
         // if the mouse is on top of a gui element or so, exit
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
+        if (EventSystem.current.IsPointerOverGameObject()) {
             return;
         }
 
-        if (!buildManager.CanBuild)
-        {
+        if (!buildManager.CanBuild) {
             return;
         }
 
-        if (buildManager.HasMoney)
-        {
+        if (buildManager.HasMoney) {
             rend.material.color = hoverColor;
         }
-        else
-        {
+        else {
             rend.material.color = hoverAlarmColor;
         }
     }
 
-    private void OnMouseExit()
-    {
+    private void OnMouseExit() {
         rend.material.color = starColor;
     }
 }

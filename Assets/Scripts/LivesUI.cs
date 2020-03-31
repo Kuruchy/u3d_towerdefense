@@ -2,12 +2,10 @@
 using UnityEngine.UI;
 
 public class LivesUI : MonoBehaviour {
-
     public Text livesText;
-	
-	// Update is called once per frame
-	void Update ()
-    {
+
+    // Update is called once per frame
+    void Update() {
         livesText.text = PlayerStats.Life.ToString() + " Lives";
-	}
+    }
 }
